@@ -1,0 +1,10 @@
+{
+  "name": "Remix Remix Remix Remix VIZAG 360 – NagarNet",
+  "description": "AI-powered municipal governance, environmental satellite intelligence, and civic issue resolution platform for Greater Visakhapatnam Municipal Corporation (GVMC).",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

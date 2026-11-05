@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: 'Righteous', 'Syne', cursive, sans-serif;
+  --font-decorative: 'Righteous', 'Unbounded', cursive, sans-serif;
+}
+
+.font-display-brand {
+  font-family: 'Righteous', 'Syne', cursive, sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.font-decorative-brand {
+  font-family: 'Righteous', cursive, sans-serif;
+  letter-spacing: 0.03em;
+}
+
+/* Smooth theme transition */
+html.dark {
+  color-scheme: dark;
+}
+

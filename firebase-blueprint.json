@@ -1,0 +1,100 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile for citizens, GVMC field officers, and administrators.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "displayName": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 150 },
+        "phone": { "type": "string", "maxLength": 20 },
+        "ward": { "type": "string", "maxLength": 50 },
+        "role": { "type": "string", "enum": ["citizen", "officer", "admin"] },
+        "honorPoints": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Complaint": {
+      "title": "Complaint",
+      "description": "Citizen civic infrastructure issue report or disaster hazard report.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "citizenId": { "type": "string", "maxLength": 128 },
+        "citizenName": { "type": "string", "maxLength": 100 },
+        "citizenEmail": { "type": "string", "maxLength": 150 },
+        "title": { "type": "string", "maxLength": 200 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "category": {
+          "type": "string",
+          "enum": [
+            "road_damage",
+            "garbage_accumulation",
+            "water_leakage",
+            "streetlight_failure",
+            "drainage_problems",
+            "other_civic"
+          ]
+        },
+        "priority": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+        "status": {
+          "type": "string",
+          "enum": [
+            "submitted",
+            "under_review",
+            "in_progress",
+            "resolved",
+            "verified_closed"
+          ]
+        },
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "address": { "type": "string", "maxLength": 300 },
+        "ward": { "type": "string", "maxLength": 50 },
+        "imageUrl": { "type": "string", "maxLength": 1000 },
+        "proofOfWorkUrl": { "type": "string", "maxLength": 1000 },
+        "proofOfWorkNotes": { "type": "string", "maxLength": 1000 },
+        "assignedOfficerId": { "type": "string", "maxLength": 128 },
+        "assignedOfficerName": { "type": "string", "maxLength": 100 },
+        "department": { "type": "string", "maxLength": 100 },
+        "slaDeadline": { "type": "string", "format": "date-time" },
+        "escalated": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "citizenId", "title", "category", "status", "lat", "lng"]
+    },
+    "ActivityLog": {
+      "title": "ActivityLog",
+      "description": "Audit trail and state transition log for municipal accountability.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "complaintId": { "type": "string", "maxLength": 128 },
+        "action": { "type": "string", "maxLength": 100 },
+        "actorId": { "type": "string", "maxLength": 128 },
+        "actorName": { "type": "string", "maxLength": 100 },
+        "actorRole": { "type": "string", "maxLength": 50 },
+        "details": { "type": "string", "maxLength": 1000 },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "complaintId", "action", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile with role and contact information."
+    },
+    "/complaints/{complaintId}": {
+      "schema": "Complaint",
+      "description": "Public infrastructure issue tickets and SLA tracking."
+    },
+    "/activityLogs/{logId}": {
+      "schema": "ActivityLog",
+      "description": "Append-only activity log for complaints and governance."
+    }
+  }
+}

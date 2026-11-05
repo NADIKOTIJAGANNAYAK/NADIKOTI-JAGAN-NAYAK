@@ -1,0 +1,72 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'venkatasairamaashrith@gmail.com' ||
+        request.auth.token.email == 'sashicsm@gmail.com' ||
+        request.auth.token.email == 'mixvibe069@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // User profiles
+    match /users/{userId} {
+      allow read: if true;
+      allow create, update: if isSignedIn() && (
+        isAdmin() ||
+        isOwner(userId)
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Admin whitelist collection
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Complaints collection
+    match /complaints/{complaintId} {
+      // Public read access so citizens and officials can view tickets and GIS map
+      allow read: if true;
+
+      // Creation by authenticated citizen or guest report
+      allow create: if isSignedIn() || true;
+
+      // Updates: Official status transitions, proof of work uploads, and citizen verification
+      allow update: if isSignedIn() || isAdmin() || true;
+
+      allow delete: if isAdmin();
+    }
+
+    // Activity logs
+    match /activityLogs/{logId} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+  }
+}
